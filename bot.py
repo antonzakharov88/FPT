@@ -1,7 +1,7 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
-
+import os
 from bs4 import BeautifulSoup
 import pandas as pd
 
@@ -10,7 +10,8 @@ class Bot():
     def __init__(self, url, page_name):
         self.url = url
         self.page_name = page_name
-        download_dir = "/home/anton/FPT test"
+        dir = os.path.abspath(os.curdir)
+        download_dir = dir
         preferences = {"download.default_directory": download_dir ,
                    "directory_upgrade": True,
                    "safebrowsing.enabled": True }
@@ -99,7 +100,3 @@ class Bot():
             time.sleep(10)
 
 
-url = 'https://itdashboard.gov/'
-my_bot = Bot(url, "Agencies")
-my_bot.scrap()
-my_bot.download('Department of Agriculture')

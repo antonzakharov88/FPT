@@ -128,3 +128,21 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# robot
+testrun/
+output/
+venv/
+temp/
+.rpa/
+.idea/
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+.virtual_documents/
+*/.ipynb_checkpoints/*
+.vscode
+.DS_Store
+*.pyc
+*.zip
+.~lock*
+*/work-items-out/*
