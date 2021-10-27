@@ -1,9 +1,6 @@
 """Template robot with Python."""
 from bot import Bot
 
-def minimal_task():
-    print("Done.")
-
 
 if __name__ == "__main__":
     url = 'https://itdashboard.gov/'
