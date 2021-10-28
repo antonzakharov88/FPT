@@ -13,6 +13,7 @@ dependencies:
     # Define pip packages here. 
     # https://pypi.org/
     - rpaframework==11.4.0 # https://rpaframework.org/releasenotes.html
+    - chromedriver-binary
     - async-generator==1.10
     - attrs==21.2.0
     - beautifulsoup4==4.10.0
@@ -43,3 +44,4 @@ dependencies:
     - urllib3==1.26.7
     - wsproto==1.0.0
     - chromedriver-py
+    - webdriver-manager

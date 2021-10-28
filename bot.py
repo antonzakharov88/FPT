@@ -1,6 +1,9 @@
 import time
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 import os
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -16,9 +19,16 @@ class Bot():
                    "directory_upgrade": True,
                    "safebrowsing.enabled": True }
                 
-        options = webdriver.ChromeOptions() 
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        options.add_argument("disable-infobars")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-gpu")
+        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--no-sandbox"); 
         options.add_experimental_option("prefs", preferences)        
-        self.browser = webdriver.Chrome("../FPT test/chromedriver", chrome_options=options)
+        #self.browser = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=options) # for cloud
+        self.browser = webdriver.Chrome(f'{dir}/chromedriver', chrome_options=options) # for desktop
         self.accept_next_alert = True
 
     def close_browser(self):
@@ -32,11 +42,6 @@ class Bot():
         button.click()
         content = self.browser.page_source
 
-        """with open(f"scrap.html", "w") as fp:
-            fp.write(content)
-
-        with open("scrap.html") as file:
-            src = file.read()"""
         soup = BeautifulSoup(content, "lxml")
 
         organizations = []
@@ -90,13 +95,13 @@ class Bot():
                 list_urls.append(href)
             
         df = pd.DataFrame(list_tds)
-        df.to_excel(f"./data.xlsx", sheet_name='data', index=False)
+        df.to_excel(f"./{title}.xlsx", sheet_name='data', index=False)
 
         for url in list_urls:
             self.browser.get(url)
-            time.sleep(5)
-            download_link = self.browser.find_element_by_id("business-case-pdf")
+            time.sleep(20)
+            download_link = self.browser.find_element_by_xpath('//*[@id="business-case-pdf"]/a')
             download_link.click()
             time.sleep(10)
-
+        
 
