@@ -20,7 +20,7 @@ class Bot():
                    "safebrowsing.enabled": True }
                 
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
+        #options.add_argument('--headless')
         options.add_argument("disable-infobars")
         options.add_argument("--disable-extensions")
         options.add_argument("--disable-gpu")
@@ -82,12 +82,11 @@ class Bot():
         soup = BeautifulSoup(html, "lxml")
         
         for td in soup.find("div", class_="dataTables_scrollBody").find_all("td"):
-            if td.text in filter_value:
-                pass
-            else:
+            if td.text not in filter_value:
                 list_tds.append(td.text) 
         f = lambda A, n=7: [A[i:i+n] for i in range(0, len(A), n)]
         list_tds = f(list_tds) 
+        print(list_tds)
 
         for item in soup.find("div", class_="dataTables_scrollBody").find_all('a'):
             href = f'https://itdashboard.gov{item.get("href")}'
