@@ -1,15 +1,19 @@
 import time
+import os
+import pdfquery
+import pandas as pd
+
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-import os
 from bs4 import BeautifulSoup
-import pandas as pd
+from glob import glob
 
 
 class Bot():
+    
     def __init__(self, url, page_name):
         self.url = url
         self.page_name = page_name
@@ -20,21 +24,23 @@ class Bot():
                    "safebrowsing.enabled": True }
                 
         options = webdriver.ChromeOptions()
-        #options.add_argument('--headless')
+        options.add_argument('--headless')
         options.add_argument("disable-infobars")
         options.add_argument("--disable-extensions")
         options.add_argument("--disable-gpu")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox"); 
         options.add_experimental_option("prefs", preferences)        
-        #self.browser = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=options) # for cloud
-        self.browser = webdriver.Chrome(f'{dir}/chromedriver', chrome_options=options) # for desktop
+        self.browser = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=options) # for cloud
+        #self.browser = webdriver.Chrome(f'{dir}/chromedriver', chrome_options=options) # for desktop
         self.accept_next_alert = True
+
 
     def close_browser(self):
         self.browser.close()
         self.browser.quit()
     
+
     def scrap(self):
         self.browser.get(self.url)
         time.sleep(3)
@@ -86,14 +92,13 @@ class Bot():
                 list_tds.append(td.text) 
         f = lambda A, n=7: [A[i:i+n] for i in range(0, len(A), n)]
         list_tds = f(list_tds) 
-        print(list_tds)
 
         for item in soup.find("div", class_="dataTables_scrollBody").find_all('a'):
             href = f'https://itdashboard.gov{item.get("href")}'
             if href not in list_urls:    
                 list_urls.append(href)
             
-        df = pd.DataFrame(list_tds)
+        df = pd.DataFrame(list_tds, columns=("ull", "Bureau", "Investment Title", "spending", "Type", "CIO Rating", "of Projects"))
         df.to_excel(f"./{title}.xlsx", sheet_name='data', index=False)
 
         for url in list_urls:
@@ -102,5 +107,41 @@ class Bot():
             download_link = self.browser.find_element_by_xpath('//*[@id="business-case-pdf"]/a')
             download_link.click()
             time.sleep(10)
-        
+    
 
+    def compare_results(self, title):
+        pdf_files = glob(f'{os.path.abspath(os.curdir)}/*.pdf')
+        compare_dict = {"ull": [], "Investment Title": [], "status": []}
+        for file in pdf_files:
+            pdf = pdfquery.PDFQuery(file)
+            pdf.load(0)
+            pdf_list = pdf.pq(':contains("Name of this Investment:")').text()
+            
+            with open("temp.txt", "w") as f:
+                f.write(pdf_list)
+            list_names = []
+            list_ulls = []
+            with open("temp.txt", "r") as f:
+                for line in f.readlines():
+                    if line.startswith("1. Name of this Investment"):
+                        list_names.extend(line.split(":"))
+                    if line.startswith("2. Unique Investment Identifier (UII)"):
+                        list_ulls.extend(line.split(":"))
+            name = list_names[1][1:-1]
+            ull = list_ulls[1][1:-1]
+            
+            tmp_dict = {"ull": ull, "Investment Title": name}
+            
+            with pd.ExcelFile(f"./{title}.xlsx") as reader:
+                sheet = pd.read_excel(reader, sheet_name='data', usecols=["ull", "Investment Title"])
+                data = sheet.to_dict(orient='records')
+                if tmp_dict in data:
+                    tmp_dict.update({"status": "successful test"})        
+                else:
+                    tmp_dict.update({"status": "Failure"})    
+            for key in tmp_dict.keys():
+                compare_dict[key].append(tmp_dict[key])
+                
+        df = pd.DataFrame(compare_dict)
+        df.to_excel(f"{os.path.abspath(os.curdir)}/compare.xlsx", sheet_name='Test results', index=False)
+        

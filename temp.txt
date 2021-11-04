@@ -1,0 +1,85 @@
+Business Case Detail
+UII 005-000003297
+Date Investment First Submitted: 2018-09-19
+Date of Last Change to Activities: 2021-01-29
+Investment Auto Submission Date:
+Date of Last Investment Detail Update: 2021-04-27
+Date of Last Business Case Update: 2021-04-27
+Date of Last Revision: 2021-08-26
+Agency: 005 - Department of Agriculture Bureau: 96 - Forest Service
+1. Name of this Investment: NRE-FS-Open Forest (FS Enterprise ePermit)
+2. Unique Investment Identifier (UII): 005-000003297
+005SO18015: Contribute to the economic health of rural communities through use and
+1. Provide at least one Agency Strategic objective code (A-11 Section 230) and/or
+Agency Priority Goal code (A-11 Section 250) that this investment aligns to on
+performance.gov. If this investment aligns to more than one Agency strategic
+objective code and/or Agency Priority goal code list all that apply. If your agency
+does not report to performance.gov please use “0”. This is required for Agency IT
+Portfolio Summary Part 1 and Part 2 Investments, not for Part 3 Investments.
+Agency Strategic Objective(s):
+005SO18015: Contribute to the economic health of rural communities through use and
+access opportunities.
+Agency Priority Goal(s):
+2. Briefly describe the investment’s return on investment, including benefits
+internal and external to the government and outcomes achieved or planned.
+The qualitative ROI for Open Forest/USFS ePermits includes the following: 1)Provides
+Customers with consistent high level user experience and Online access to Forest
+Service services 2)Provides USDA and USFS a cost efficient Open Source solution that
+is approved and managed within all USDA Cyber security IT Governance Parameters 3)
+This solution pioneered the implementation of the concepts behind the USDA Centers of
+Excellence and US Digital Strategy by creating a Cloud modular platform (through
+modular contracting) with an Open Source code base that was designed with a focus on
+Human Centered Design Research and User experience using Agile practices.
+The quantitative return on this investment is minimal. The Christmas Tree permitting
+workflow has been moved to Recreation.gov. Due to that move the Open Forest
+investment no longer provides a service that collects funds and is currently implemented
+on 1 National Forest providing services as an on-line application submission that does
+Page 1 / 12 of Business Case
+Date of Last Revision: 2021-08-26
+Business Case (2022)
+Section B: Investment Detail
+Section A: Overview & General Information
+Part I: Summary Information and Justification (All Capital Assets)
+Business Case: Capital Asset Summary Business Case Detail
+UII 005-000003297
+Date Investment First Submitted: 2018-09-19
+Date of Last Change to Activities: 2021-01-29
+Investment Auto Submission Date:
+Date of Last Investment Detail Update: 2021-04-27
+Date of Last Business Case Update: 2021-04-27
+Date of Last Revision: 2021-08-26
+Agency: 005 - Department of Agriculture Bureau: 96 - Forest Service
+1. Name of this Investment: NRE-FS-Open Forest (FS Enterprise ePermit)
+2. Unique Investment Identifier (UII): 005-000003297
+005SO18015: Contribute to the economic health of rural communities through use and
+1. Provide at least one Agency Strategic objective code (A-11 Section 230) and/or
+Agency Priority Goal code (A-11 Section 250) that this investment aligns to on
+performance.gov. If this investment aligns to more than one Agency strategic
+objective code and/or Agency Priority goal code list all that apply. If your agency
+does not report to performance.gov please use “0”. This is required for Agency IT
+Portfolio Summary Part 1 and Part 2 Investments, not for Part 3 Investments.
+Agency Strategic Objective(s):
+005SO18015: Contribute to the economic health of rural communities through use and
+access opportunities.
+Agency Priority Goal(s):
+2. Briefly describe the investment’s return on investment, including benefits
+internal and external to the government and outcomes achieved or planned.
+The qualitative ROI for Open Forest/USFS ePermits includes the following: 1)Provides
+Customers with consistent high level user experience and Online access to Forest
+Service services 2)Provides USDA and USFS a cost efficient Open Source solution that
+is approved and managed within all USDA Cyber security IT Governance Parameters 3)
+This solution pioneered the implementation of the concepts behind the USDA Centers of
+Excellence and US Digital Strategy by creating a Cloud modular platform (through
+modular contracting) with an Open Source code base that was designed with a focus on
+Human Centered Design Research and User experience using Agile practices.
+The quantitative return on this investment is minimal. The Christmas Tree permitting
+workflow has been moved to Recreation.gov. Due to that move the Open Forest
+investment no longer provides a service that collects funds and is currently implemented
+on 1 National Forest providing services as an on-line application submission that does
+Page 1 / 12 of Business Case
+Date of Last Revision: 2021-08-26
+Business Case (2022)
+Section B: Investment Detail
+Section A: Overview & General Information
+Part I: Summary Information and Justification (All Capital Assets)
+Business Case: Capital Asset Summary 1. Name of this Investment: NRE-FS-Open Forest (FS Enterprise ePermit) 1. Name of this Investment: NRE-FS-Open Forest (FS Enterprise ePermit)
