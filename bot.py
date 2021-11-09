@@ -110,38 +110,67 @@ class Bot():
     
 
     def compare_results(self, title):
-        pdf_files = glob(f'{os.path.abspath(os.curdir)}/*.pdf')
+        pdf_files = glob(f'{os.path.abspath(os.curdir)}/*.pdf') # ищем все pdf файлы
+
+        # создаем словарь с ключами, в который в дальнейшем добавим значения
+
         compare_dict = {"ull": [], "Investment Title": [], "status": []}
+
+        #---------------------------------------------------------------------------------------------------------------
+        # читаем и извлекаем необходимые данные из pdf файлов
+         
         for file in pdf_files:
             pdf = pdfquery.PDFQuery(file)
             pdf.load(0)
-            pdf_list = pdf.pq(':contains("Name of this Investment:")').text()
+            label = pdf.pq(':contains("1. Name of this Investment:")')
+
+            #------------------------------------------------------------------------------------------------------------
+            # Получаем список элементов(текст) из нужного раздела pdf
             
-            with open("temp.txt", "w") as f:
-                f.write(pdf_list)
-            list_names = []
-            list_ulls = []
-            with open("temp.txt", "r") as f:
-                for line in f.readlines():
-                    if line.startswith("1. Name of this Investment"):
-                        list_names.extend(line.split(":"))
-                    if line.startswith("2. Unique Investment Identifier (UII)"):
-                        list_ulls.extend(line.split(":"))
-            name = list_names[1][1:-1]
-            ull = list_ulls[1][1:-1]
+            uii_list = pdf.pq('LTTextLineHorizontal:contains("Unique Investment Identifier (UII):")').text()
+            name_list = pdf.pq('LTTextLineHorizontal:contains("Name of this Investment:")').text()
+
+            #------------------------------------------------------------------------------------------------------------
+            # Фоматируем полученные списки и получаем необходимые значения 
+            # Unique Investment Identifier (UII) и Name of this Investment
+
+            uii_list = uii_list.split(":")
+            uii = uii_list[1][1:]
+            name_list = name_list.split(":")
+            name_of_investment = name_list[1][1:]
             
-            tmp_dict = {"ull": ull, "Investment Title": name}
+            #------------------------------------------------------------------------------------------------------------            
+            # Создаем словарь и записываем в него значения Unique Investment Identifier (UII) и Name of this Investment 
+            # с ключами: "ull" и "Investment Title" соответственно
+
+            tmp_dict = {"ull": uii, "Investment Title": name_of_investment}
             
+            #------------------------------------------------------------------------------------------------------------           
+            # Извлекаем из нужного xlsx файла колонки uii и Investment Title и записываем в словарь с аналогичными ключами
+            # Получаем лист словарей "data_list"
+
             with pd.ExcelFile(f"./{title}.xlsx") as reader:
                 sheet = pd.read_excel(reader, sheet_name='data', usecols=["ull", "Investment Title"])
-                data = sheet.to_dict(orient='records')
-                if tmp_dict in data:
-                    tmp_dict.update({"status": "successful test"})        
+                data_list = sheet.to_dict(orient='records')
+
+            #------------------------------------------------------------------------------------------------------------
+            # Сравниваем полученный словарь(tmp_dict) из pdf со словарями из xlsx файла
+            # если он пристутсвует в списке словарей из xlsx файла, обновляем текущий словарь tmp_dict 
+            # значением "match" с ключом "status"
+
+                if tmp_dict in data_list:
+                    tmp_dict.update({"status": "match"})        
                 else:
-                    tmp_dict.update({"status": "Failure"})    
+                    tmp_dict.update({"status": "mismatch"})
+
+            #------------------------------------------------------------------------------------------------------------
+            # добавляем значения из словаря tmp_dict по ключам в словарь сравнения "compare_dict", который создали вначале
+
             for key in tmp_dict.keys():
                 compare_dict[key].append(tmp_dict[key])
-                
+            
+        #------------------------------------------------------------------------------------------------------------
+        # Записываем результаты проверки в compare.xlsx         
         df = pd.DataFrame(compare_dict)
         df.to_excel(f"{os.path.abspath(os.curdir)}/compare.xlsx", sheet_name='Test results', index=False)
         
