@@ -1,5 +1,6 @@
 import time
 import os
+from numpy import equal
 import pdfquery
 import pandas as pd
 
@@ -24,15 +25,15 @@ class Bot():
                    "safebrowsing.enabled": True }
                 
         options = webdriver.ChromeOptions()
-        options.add_argument('--headless')
+        #options.add_argument('--headless')
         options.add_argument("disable-infobars")
         options.add_argument("--disable-extensions")
         options.add_argument("--disable-gpu")
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox"); 
         options.add_experimental_option("prefs", preferences)        
-        self.browser = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=options) # for cloud
-        #self.browser = webdriver.Chrome(f'{dir}/chromedriver', chrome_options=options) # for desktop
+        #self.browser = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver', chrome_options=options) # for cloud
+        self.browser = webdriver.Chrome(f'{dir}/chromedriver', chrome_options=options) # for desktop
         self.accept_next_alert = True
 
 
@@ -90,31 +91,38 @@ class Bot():
         for td in soup.find("div", class_="dataTables_scrollBody").find_all("td"):
             if td.text not in filter_value:
                 list_tds.append(td.text) 
-        f = lambda A, n=7: [A[i:i+n] for i in range(0, len(A), n)]
-        list_tds = f(list_tds) 
+
+        list_tds = [list_tds[i:i+7] for i in range(0, len(list_tds), 7)] 
 
         for item in soup.find("div", class_="dataTables_scrollBody").find_all('a'):
             href = f'https://itdashboard.gov{item.get("href")}'
             if href not in list_urls:    
                 list_urls.append(href)
             
-        df = pd.DataFrame(list_tds, columns=("ull", "Bureau", "Investment Title", "spending", "Type", "CIO Rating", "of Projects"))
+        df = pd.DataFrame(list_tds, columns=("uii", "Bureau", "Investment Title", "spending", "Type", "CIO Rating", "of Projects"))
         df.to_excel(f"./{title}.xlsx", sheet_name='data', index=False)
-
+        self.df_dict = df.to_dict("index")
+        
+        
         for url in list_urls:
             self.browser.get(url)
             time.sleep(20)
             download_link = self.browser.find_element_by_xpath('//*[@id="business-case-pdf"]/a')
             download_link.click()
             time.sleep(10)
-    
+        
 
     def compare_results(self, title):
         pdf_files = glob(f'{os.path.abspath(os.curdir)}/*.pdf') # Looking for all pdf files
 
-        # Create a dictionary with keys, to which we will later add values
+        # Creating a compare list with values from keys of data frame dict
+        # updating the obtained dictionary with the keys "compare uii" and "compare Investment Title" whith default values
 
-        compare_dict = {"ull": [], "Investment Title": [], "status": []}
+        compare_list = [value for key, value in self.df_dict.items()]
+ 
+        for dict in compare_list:
+                dict.update({"compare uii": "no match pdf uii", 
+                            "compare Investment Title": "no match pdf Investment Title"})
 
         #---------------------------------------------------------------------------------------------------------------
         # read and extract data from pdf files
@@ -122,7 +130,6 @@ class Bot():
         for file in pdf_files:
             pdf = pdfquery.PDFQuery(file)
             pdf.load(0)
-            label = pdf.pq(':contains("1. Name of this Investment:")')
 
             #------------------------------------------------------------------------------------------------------------
             # Get a list of items (text) from the desired section of the pdf
@@ -138,41 +145,22 @@ class Bot():
             uii = uii_list[1][1:]
             name_list = name_list.split(":")
             name_of_investment = name_list[1][1:]
-            
-            #------------------------------------------------------------------------------------------------------------            
-            # Create a dictionary and write into it the Unique Investment Identifier (UII) and Name of this Investment 
-            # with the keys: "ull" and "Investment Title" respectively
-
-            tmp_dict = {"ull": uii, "Investment Title": name_of_investment}
+            pdf_name = file[-17:]
             
             #------------------------------------------------------------------------------------------------------------           
-            # Extract the uii and Investment Title columns from the desired xlsx file and write them in the dictionary 
-            # with the same keys
-            # We get the "data_list" list of dictionaries
+            # compare the values obtained from the pdf file with the values from the data, 
+            # and update the current dictionary if the comparison is successful
 
-            with pd.ExcelFile(f"./{title}.xlsx") as reader:
-                sheet = pd.read_excel(reader, sheet_name='data', usecols=["ull", "Investment Title"])
-                data_list = sheet.to_dict(orient='records')
+            for dict in compare_list:    
+                if dict.get("uii") == uii:
+                    dict.update({"compare uii": f"{pdf_name} uii match current uii"})
+                if dict.get("Investment Title") == name_of_investment:
+                    dict.update(
+                        {"compare Investment Title": f"{pdf_name} name of investment match current Investment Title"}
+                        )
 
-            #------------------------------------------------------------------------------------------------------------
-            # Compare the resulting dictionary (tmp_dict) from the pdf with the dictionaries from the xlsx file
-            # if it is present in the list of dictionaries from the xlsx file, update the current tmp_dict dictionary 
-            # with the "match" value with the "status" key
-
-                if tmp_dict in data_list:
-                    tmp_dict.update({"status": "match"})        
-                else:
-                    tmp_dict.update({"status": "mismatch"})
-
-            #------------------------------------------------------------------------------------------------------------
-            # add values from the tmp_dict dictionary by keys to the "compare_dict" comparison dictionary, 
-            # which we created at the beginning
-
-            for key in tmp_dict.keys():
-                compare_dict[key].append(tmp_dict[key])
-            
-        #------------------------------------------------------------------------------------------------------------
+        #-----------------------------------------------------------------------------------------------------------------    
         # Write the results in compare.xlsx         
-        df = pd.DataFrame(compare_dict)
+        df = pd.DataFrame(compare_list)
         df.to_excel(f"{os.path.abspath(os.curdir)}/compare.xlsx", sheet_name='Test results', index=False)
         
